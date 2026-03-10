@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tastehub</title>
+    <!-- PWA Manifest for Android -->
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#ffffff" />
+    <!-- Modern Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+    <!-- App Container -->
+    <div id="app" class="app-container">
+
+        <!-- Top Navigation -->
+        <nav class="navbar hidden" id="navbar">
+            <div class="logo">Tastehub</div>
+            <div class="nav-actions">
+                <div class="user-greeting" id="userGreeting"></div>
+                <button id="navRestaurantsBtn" class="nav-btn hidden">Restaurants</button>
+                <button id="navSubscriptionsBtn" class="nav-btn hidden">Subscriptions</button>
+                <button id="navUserOrdersBtn" class="nav-btn hidden">My Orders</button>
+                <button id="navManageOrdersBtn" class="nav-btn hidden">Admin Dashboard</button>
+                <button id="cartBtn" class="cart-btn">
+                    Cart <span id="cartCount" class="badge">0</span>
+                </button>
+                <button id="logoutBtn" class="logout-btn">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="mainContent" class="main-content">
+
+            <!-- Auth View -->
+            <section id="authView" class="view view-active">
+                <div class="auth-container">
+                    <h1 class="brand-title">Tastehub</h1>
+                    <p class="brand-subtitle">Satisfy your cravings</p>
+
+                    <div class="auth-tabs">
+                        <button class="tab-btn active" data-tab="login">Login</button>
+                        <button class="tab-btn" data-tab="register">Register</button>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form id="loginForm" class="auth-form active">
+                        <div class="form-group">
+                            <label for="loginEmail">Email</label>
+                            <input type="email" id="loginEmail" required placeholder="Enter your email" />
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" required placeholder="Enter your password" />
+                        </div>
+                        <button type="submit" class="primary-btn">Login</button>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form id="registerForm" class="auth-form hidden">
+                        <div class="form-group">
+                            <label for="registerName">Full Name</label>
+                            <input type="text" id="registerName" required placeholder="Enter your name" />
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmail">Email</label>
+                            <input type="email" id="registerEmail" required placeholder="Enter your email" />
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword">Password</label>
+                            <input type="password" id="registerPassword" required placeholder="Create a password" />
+                        </div>
+                        <button type="submit" class="primary-btn">Register</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Home / Restaurants View -->
+            <section id="restaurantsView" class="view hidden">
+                <h2 class="view-title">Popular Restaurants</h2>
+                <div class="restaurants-grid" id="restaurantsGrid">
+                    <!-- Restaurant cards will be rendered here dynamically -->
+                </div>
+            </section>
+
+            <!-- Restaurant Details / Menu View -->
+            <section id="menuView" class="view hidden">
+                <button id="backToRestaurantsBtn" class="back-btn">&larr; Back to Restaurants</button>
+                <div class="restaurant-header" id="restaurantHeader">
+                    <!-- Header content will be rendered here -->
+                </div>
+                <h3 class="section-title">Menu</h3>
+                <div class="menu-grid" id="menuGrid">
+                    <!-- Food items will be rendered here dynamically -->
+                </div>
+            </section>
+
+            <!-- Checkout View -->
+            <section id="checkoutView" class="view hidden">
+                <button id="backToMenuBtn" class="back-btn">&larr; Back</button>
+                <div class="checkout-layout">
+                    <div class="checkout-form-container">
+                        <h2 class="view-title">Checkout Details</h2>
+                        <form id="checkoutForm" class="checkout-form">
+                            <div class="form-group">
+                                <label for="checkoutName">Name</label>
+                                <input type="text" id="checkoutName" required placeholder="Your full name" />
+                            </div>
+                            <div class="form-group">
+                                <label for="checkoutAddress">Delivery Address</label>
+                                <textarea id="checkoutAddress" required rows="3"
+                                    placeholder="Enter full delivery address"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="checkoutPhone">Phone Number</label>
+                                <input type="tel" id="checkoutPhone" required placeholder="Your phone number" />
+                            </div>
+                            <button type="submit" class="confirm-order-btn">Confirm Order</button>
+                        </form>
+                    </div>
+
+                    <div class="order-summary-container">
+                        <h3>Order Summary</h3>
+                        <div id="checkoutOrderItems" class="checkout-items"></div>
+                        <div class="checkout-total">
+                            <span>Total:</span>
+                            <span id="checkoutTotalPrice">₹0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Order Track View (Legacy/Quick View) -->
+            <section id="orderTrackView" class="view hidden">
+                <div class="order-success-card">
+                    <div class="success-icon">&#10004;</div>
+                    <h2 class="view-title">Order Submitted!</h2>
+                    <p>Thank you, <span id="confirmedCustomerName"></span>. Pending admin approval.</p>
+                    <button id="newOrderBtn" class="primary-btn mt-4">Place Another Order</button>
+                    <button id="viewMyOrdersBtn" class="secondary-btn mt-4">View My Orders</button>
+                </div>
+            </section>
+
+            <!-- User Orders View (New History & Tracking) -->
+            <section id="userOrdersView" class="view hidden">
+                <h2 class="view-title">My Orders & Tracking</h2>
+                <div class="user-orders-layout" id="userOrdersLayout">
+                    <!-- User orders will be dynamically rendered here -->
+                </div>
+            </section>
+
+            <!-- Subscriptions View -->
+            <section id="subscriptionsView" class="view hidden">
+                <h2 class="view-title">Subscription Plans</h2>
+                <div class="subscriptions-grid" id="subscriptionsGrid">
+                    <!-- Subscription cards will be rendered here dynamically -->
+                </div>
+            </section>
+
+            <!-- Manage Orders View -->
+            <section id="manageOrdersView" class="view hidden">
+                <h2 class="view-title">Admin: Customer Orders Database</h2>
+                <div class="orders-table-container">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Phase</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Order rows will be rendered here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Cart Drawer Overlay -->
+        <div id="cartDrawer" class="cart-drawer-overlay hidden">
+            <div class="cart-drawer">
+                <div class="cart-header">
+                    <h3>Your Cart</h3>
+                    <button id="closeCartBtn" class="close-btn">&times;</button>
+                </div>
+                <div class="cart-items" id="cartItemsContainer">
+                    <!-- Cart items will be listed here -->
+                    <p class="empty-cart-msg">Your cart is empty.</p>
+                </div>
+                <div class="cart-footer">
+                    <div class="cart-total-row">
+                        <span>Total</span>
+                        <span id="cartDrawerTotal">₹0.00</span>
+                    </div>
+                    <button id="proceedToCheckoutBtn" class="checkout-btn" disabled>Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification for Add to Cart -->
+        <div id="toast" class="toast hidden">
+            Item added to cart!
+        </div>
+
+    </div>
+
+    <!-- App Logic -->
+    <script src="./main.js" defer></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then(reg => {
+                    console.log('ServiceWorker registration successful with scope: ', reg.scope);
+                }).catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>
